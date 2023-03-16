@@ -74,7 +74,7 @@ public class WebSocketConnectionTest {
 
     @Before
     public void setUp() throws URISyntaxException, SSLException {
-        when(factory.newWebSocketClientWrapper(any(URI.class), any(Proxy.class), any(WebSocketConnection.class)))
+        when(factory.newWebSocketClientWrapper(any(URI.class), any(Proxy.class), any(WebSocketConnection.class), null))
                 .thenReturn(mockUnderlyingConnection);
         doAnswer(
                 new Answer() {

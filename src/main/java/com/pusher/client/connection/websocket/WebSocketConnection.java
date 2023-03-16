@@ -14,6 +14,7 @@ import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +47,7 @@ public class WebSocketConnection implements InternalConnection, WebSocketListene
     private String socketId;
     private int reconnectAttempts = 0;
 
+    private HashMap<String, String> headers;
     public WebSocketConnection(
             final String url,
             final long activityTimeout,
@@ -55,7 +57,7 @@ public class WebSocketConnection implements InternalConnection, WebSocketListene
             final Proxy proxy,
             final Consumer<PusherEvent> eventHandler,
             final Factory factory
-    ) throws URISyntaxException {
+            ) throws URISyntaxException {
         webSocketUri = new URI(url);
         activityTimer = new ActivityTimer(activityTimeout, pongTimeout);
         this.maxReconnectionAttempts = maxReconnectionAttempts;
@@ -64,6 +66,31 @@ public class WebSocketConnection implements InternalConnection, WebSocketListene
         this.factory = factory;
         this.eventHandler = eventHandler;
 
+        for (final ConnectionState state : ConnectionState.values()) {
+            eventListeners.put(state, Collections.newSetFromMap(new ConcurrentHashMap<>()));
+        }
+    }
+
+    public WebSocketConnection(
+            final String url,
+            final long activityTimeout,
+            final long pongTimeout,
+            int maxReconnectionAttempts,
+            int maxReconnectionGap,
+            final Proxy proxy,
+            final Consumer<PusherEvent> eventHandler,
+            final Factory factory,
+            final HashMap<String, String> headers
+
+    ) throws URISyntaxException {
+        webSocketUri = new URI(url);
+        activityTimer = new ActivityTimer(activityTimeout, pongTimeout);
+        this.maxReconnectionAttempts = maxReconnectionAttempts;
+        this.maxReconnectionGap = maxReconnectionGap;
+        this.proxy = proxy;
+        this.factory = factory;
+        this.eventHandler = eventHandler;
+        this.headers = headers;
         for (final ConnectionState state : ConnectionState.values()) {
             eventListeners.put(state, Collections.newSetFromMap(new ConcurrentHashMap<>()));
         }
@@ -82,7 +109,7 @@ public class WebSocketConnection implements InternalConnection, WebSocketListene
 
     private void tryConnecting() {
         try {
-            underlyingConnection = factory.newWebSocketClientWrapper(webSocketUri, proxy, WebSocketConnection.this);
+            underlyingConnection = factory.newWebSocketClientWrapper(webSocketUri, proxy, WebSocketConnection.this, headers);
             updateState(ConnectionState.CONNECTING);
             underlyingConnection.connect();
         } catch (final SSLException e) {

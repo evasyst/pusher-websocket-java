@@ -15,10 +15,12 @@ import com.pusher.client.connection.websocket.WebSocketConnection;
 import com.pusher.client.connection.websocket.WebSocketListener;
 import com.pusher.client.crypto.nacl.SecretBoxOpenerFactory;
 import com.pusher.client.user.impl.InternalUser;
+import com.sun.net.httpserver.Headers;
 
 import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -68,7 +70,8 @@ public class Factory {
                                 options.getMaxReconnectGapInSeconds(),
                                 options.getProxy(),
                                 eventHandler,
-                                this
+                                this,
+                                options.getHeaders()
                         );
             } catch (final URISyntaxException e) {
                 throw new IllegalArgumentException("Failed to initialise connection", e);
@@ -80,9 +83,10 @@ public class Factory {
     public WebSocketClientWrapper newWebSocketClientWrapper(
             final URI uri,
             final Proxy proxy,
-            final WebSocketListener webSocketListener
-    ) throws SSLException {
-        return new WebSocketClientWrapper(uri, proxy, webSocketListener);
+            final WebSocketListener webSocketListener,
+            final HashMap headers
+            ) throws SSLException {
+        return new WebSocketClientWrapper(uri, proxy, webSocketListener, headers);
     }
 
     public synchronized ScheduledExecutorService getTimers() {

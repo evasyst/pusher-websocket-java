@@ -11,6 +11,7 @@ import java.net.Proxy;
 import java.net.URI;
 import java.nio.channels.NotYetConnectedException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.net.ssl.SSLException;
@@ -20,9 +21,10 @@ public class TestWebSocketClientWrapper extends WebSocketClientWrapper {
     private final List<String> messagesSent = new ArrayList<String>();
     private boolean connectCalled = false;
 
-    public TestWebSocketClientWrapper(final URI uri, final Proxy proxy, final WebSocketListener webSocketListener)
+
+    public TestWebSocketClientWrapper(final URI uri, final Proxy proxy, final WebSocketListener webSocketListener, final HashMap<String, String> hashMap)
             throws SSLException {
-        super(uri, proxy, webSocketListener);
+        super(uri, proxy, webSocketListener, hashMap);
     }
 
     void assertConnectCalled() {

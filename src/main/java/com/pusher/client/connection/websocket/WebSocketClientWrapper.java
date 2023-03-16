@@ -7,6 +7,8 @@ import java.net.Proxy;
 import java.net.URI;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
@@ -24,9 +26,11 @@ public class WebSocketClientWrapper extends WebSocketClient {
     private static final String WSS_SCHEME = "wss";
     private WebSocketListener webSocketListener;
 
-    public WebSocketClientWrapper(final URI uri, final Proxy proxy, final WebSocketListener webSocketListener)
+    public WebSocketClientWrapper(final URI uri, final Proxy proxy, final WebSocketListener webSocketListener, final HashMap<String, String> headers)
+
             throws SSLException {
-        super(uri);
+
+        super(uri, headers);
         if (uri.getScheme().equals(WSS_SCHEME)) {
             try {
                 SSLContext sslContext = SSLContext.getInstance("TLS");

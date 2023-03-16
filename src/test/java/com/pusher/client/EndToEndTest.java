@@ -33,6 +33,7 @@ import org.mockito.stubbing.Answer;
 
 import java.net.Proxy;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.function.Consumer;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -103,7 +104,7 @@ public class EndToEndTest {
                 .queueOnEventThread(any(Runnable.class));
 
         when(factory.getTimers()).thenReturn(new DoNothingExecutor());
-        when(factory.newWebSocketClientWrapper(any(URI.class), any(Proxy.class), any(WebSocketListener.class)))
+        when(factory.newWebSocketClientWrapper(any(URI.class), any(Proxy.class), any(WebSocketListener.class), null))
                 .thenAnswer(
                         new Answer<WebSocketClientWrapper>() {
                             @Override
@@ -111,7 +112,8 @@ public class EndToEndTest {
                                 final URI uri = (URI) invocation.getArguments()[0];
                                 final Proxy proxy = (Proxy) invocation.getArguments()[1];
                                 final WebSocketListener webSocketListener = (WebSocketListener) invocation.getArguments()[2];
-                                testWebsocket = new TestWebSocketClientWrapper(uri, proxy, webSocketListener);
+                                final HashMap<String, String> emptyHash = new HashMap<String, String>();
+                                testWebsocket = new TestWebSocketClientWrapper(uri, proxy, webSocketListener, emptyHash);
                                 return testWebsocket;
                             }
                         }

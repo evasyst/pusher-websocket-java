@@ -3,6 +3,7 @@ package com.pusher.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Proxy;
+import java.util.HashMap;
 import java.util.Properties;
 
 /**
@@ -44,6 +45,7 @@ public class PusherOptions {
     private int maxReconnectionAttempts = MAX_RECONNECTION_ATTEMPTS;
     private int maxReconnectGapInSeconds = MAX_RECONNECT_GAP_IN_SECONDS;
 
+    private HashMap<String, String> headers;
     /**
      * @deprecated Please use isUseTLS
      */
@@ -211,6 +213,19 @@ public class PusherOptions {
 
         this.activityTimeout = activityTimeout;
         return this;
+    }
+
+    /**
+     * Set custom http headers to be passed on the connection attempt. Useful for overrides
+     * @return
+     */
+    public PusherOptions setHeaders(final HashMap<String,String> headers) {
+        this.headers = headers;
+        return this;
+    }
+
+    public HashMap<String, String> getHeaders() {
+        return this.headers;
     }
 
     public long getActivityTimeout() {
